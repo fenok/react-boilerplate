@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { DevelopmentPage, DevelopmentPageThemeName } from '../modules/development/components/DevelopmentPage';
 import { RootPage } from '../modules/root/components/RootPage';
+import { TeamPage } from '../modules/team/TeamPage';
 import { route } from './route';
 
 export const routes = {
@@ -14,5 +15,10 @@ export const routes = {
         path: '/development/:name/:id',
         name: 'DEVELOPMENT',
         render: () => React.createElement(DevelopmentPage, { name: 'User', themeName: DevelopmentPageThemeName.ALTER }),
+    }),
+    TEAM: route<'id'>({
+        path: '/team/:id',
+        name: 'TEAM',
+        component: TeamPage,
     }),
 };
