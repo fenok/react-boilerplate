@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-import { TeamPageTemplate } from './TeamPageTemplate';
+import { CurrentCommnProps, TeamPageTemplate } from './TeamPageTemplate';
+
+interface Props extends CurrentCommnProps {}
+
+type RouteProps = Props & RouteComponentProps<matchParams>;
 
 interface matchParams {
     id: string;
 }
 
-interface Props extends RouteComponentProps<matchParams> {}
-
-class TeamPageConnect extends React.Component<Props> {
+class TeamPageConnect extends React.Component<RouteProps> {
     render() {
         return <TeamPageTemplate teamId={this.props.match.params.id} />;
     }

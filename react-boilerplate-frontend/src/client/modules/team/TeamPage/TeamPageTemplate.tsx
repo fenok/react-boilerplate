@@ -1,11 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { mediaWidth } from '../../../media';
+
 import { CommonProps } from '../../common/lib/CommonProps';
 
 import { Header } from '../../common/components/Header';
 
-interface Props extends CommonProps {
+interface CurrentCommnProps extends CommonProps {}
+
+interface Props extends CurrentCommnProps {
     teamId: string;
 }
 
@@ -19,10 +23,15 @@ const TeamPageTemplate: React.StatelessComponent<Props> = ({ className, teamId }
 const Page = styled.div``;
 const Content = styled.div`
     display: flex;
-    height: 500px;
+    height: 300px;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 17px;
+
+    ${mediaWidth.m} {
+        height: 500px;
+        font-size: 30px;
+    }
 `;
 
-export { TeamPageTemplate, Props as TeamPageTemplateProps };
+export { TeamPageTemplate, CurrentCommnProps };
