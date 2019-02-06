@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 import * as React from 'react';
-import { DevelopmentPage, DevelopmentPageThemeName } from '../../../development/pages/DevelopmentPage';
+import { DevelopmentPage, DevelopmentPageThemeName } from '../../../development/pages/HooksDevelopmentPage';
 import { ShowcasePage } from '../../../development/pages/ShowcasePage';
 import { RootPage } from '../../../root/pages/RootPage';
 import { NotFoundPage } from '../../pages/NotFoundPage';
