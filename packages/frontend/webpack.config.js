@@ -38,7 +38,7 @@ function commonLoaders(ssrMode, env) {
                           }
                         : packageJson.browserslist,
                     useBuiltIns: 'entry',
-                    corejs: 3,
+                    corejs: packageJson.devDependencies['core-js'].split('.')[0],
                 },
             ],
         ],
