@@ -11,8 +11,6 @@ module.exports = {
                 targets: {
                     node: packageJson.engines.node,
                 },
-                useBuiltIns: 'entry',
-                corejs: 3,
             },
         ],
         '@babel/react',

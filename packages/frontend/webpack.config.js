@@ -37,6 +37,8 @@ function commonLoaders(ssrMode, env) {
                               node: packageJson.engines.node,
                           }
                         : packageJson.browserslist,
+                    useBuiltIns: 'entry',
+                    corejs: 3,
                 },
             ],
         ],
