@@ -12,6 +12,7 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { ReactLoadablePlugin } = require('react-loadable/webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OperationRegistryPlugin = require('./tools/webpack/plugins/OperationRegistryPlugin');
+const packageJson = require('./package');
 
 /** These paths are handled by frontend server, so they must be relative */
 const WEB_MANIFEST_PATH = '/manifest.json';
@@ -24,13 +25,28 @@ const APP_SHORT_NAME = 'R.B.';
 const APP_DESCRIPTION = 'React Boilerplate of c7s';
 
 function commonLoaders(ssrMode, env) {
+    const babelLoaderOptions = {
+        cacheDirectory: true,
+        presets: [
+            [
+                '@babel/env',
+                {
+                    modules: false,
+                    targets: ssrMode
+                        ? {
+                              node: packageJson.engines.node,
+                          }
+                        : packageJson.browserslist,
+                },
+            ],
+        ],
+    };
+
     return [
         {
             test: /\.[tj]sx?$/,
             loader: 'babel-loader',
-            options: {
-                cacheDirectory: true,
-            },
+            options: babelLoaderOptions,
             exclude: /node_modules[\\/](?!(query-string|strict-uri-encode|split-on-first))/,
         },
         {
@@ -70,9 +86,7 @@ function commonLoaders(ssrMode, env) {
             loaders: [
                 {
                     loader: 'babel-loader',
-                    options: {
-                        cacheDirectory: true,
-                    },
+                    options: babelLoaderOptions,
                 },
                 {
                     loader: 'svg-sprite-loader',
@@ -176,6 +190,7 @@ const cacheableDependencies = [
     'svg-sprite-loader',
     'unfetch',
     'core-js',
+    'regenerator-runtime',
     'stylis',
     'history',
     'zen-observable',
@@ -185,8 +200,8 @@ const clientConfig = env => ({
     name: 'client',
     target: 'web',
     entry: [
-        '@babel/polyfill',
-        'unfetch/polyfill',
+        './src/client/globals/isomorphic-globals',
+        './src/client/globals/client-globals',
         !env.build && 'webpack-hot-middleware/client?reload=true&noInfo=true',
         !env.build && 'react-hot-loader/patch',
         './src/client/client.ts',
@@ -258,7 +273,7 @@ const clientConfig = env => ({
 const serverConfig = env => ({
     name: 'server',
     target: 'node',
-    entry: ['@babel/polyfill/noConflict', './src/client/server.ts'],
+    entry: ['./src/client/globals/isomorphic-globals', './src/client/server.ts'],
     module: {
         rules: commonLoaders(true, env),
     },

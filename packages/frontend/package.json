@@ -30,6 +30,13 @@
         "node": "8.11.1",
         "yarn": "^1.6.0"
     },
+    "browserslist": [
+        "last 1 version",
+        "safari >= 9",
+        "ie >= 11",
+        "ios >= 9",
+        "android >= 4"
+    ],
     "lint-staged": {
         "*.js": [
             "eslint --fix --quiet",
@@ -59,7 +66,6 @@
         "@babel/plugin-proposal-decorators": "7.4.4",
         "@babel/plugin-syntax-dynamic-import": "7.2.0",
         "@babel/plugin-transform-react-jsx-source": "7.2.0",
-        "@babel/polyfill": "7.4.4",
         "@babel/preset-env": "7.4.5",
         "@babel/preset-react": "7.0.0",
         "@babel/preset-typescript": "7.3.3",
@@ -106,6 +112,7 @@
         "compose-function": "3.0.3",
         "concurrently": "4.1.0",
         "copy-webpack-plugin": "5.0.3",
+        "core-js": "3.4.0",
         "create-symlink": "1.0.0",
         "css-loader": "2.1.1",
         "del": "4.1.1",
@@ -156,6 +163,7 @@
         "react-router-dom": "5.0.1",
         "react-router-hash-link": "1.2.2",
         "react-test-renderer": "16.8.6",
+        "regenerator-runtime": "0.13.3",
         "reset-css": "4.0.1",
         "styled-components": "4.2.0",
         "styled-theming": "2.2.0",

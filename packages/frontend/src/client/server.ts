@@ -10,7 +10,6 @@ import Loadable from 'react-loadable';
 import { getBundles, Manifest, Bundle } from 'react-loadable/webpack';
 import { ServerStyleSheet } from 'styled-components';
 import sprite from 'svg-sprite-loader/runtime/sprite.build';
-import './isomorphic-globals-init';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
 import { StaticHelmet } from './modules/common/components/StaticHelmet';
 import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloClient';

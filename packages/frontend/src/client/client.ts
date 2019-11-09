@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Loadable from 'react-loadable';
-import './isomorphic-globals-init';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
 import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloClient';
 

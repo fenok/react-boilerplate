@@ -1,23 +1,19 @@
+const packageJson = require('./package');
+
+/**
+ * Base config, used by jest
+ */
 module.exports = {
     presets: [
         [
             '@babel/env',
-            process.env.NODE_ENV !== 'test'
-                ? {
-                      modules: false,
-                      targets: {
-                          browsers: ['last 1 version'],
-                          safari: '9',
-                          ie: '11',
-                          ios: '9',
-                          android: '4',
-                      },
-                  }
-                : {
-                      targets: {
-                          node: '8.11.1',
-                      },
-                  },
+            {
+                targets: {
+                    node: packageJson.engines.node,
+                },
+                useBuiltIns: 'entry',
+                corejs: 3,
+            },
         ],
         '@babel/react',
         '@babel/typescript',
