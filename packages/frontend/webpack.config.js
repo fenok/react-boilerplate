@@ -31,7 +31,7 @@ function commonLoaders(ssrMode, env) {
             options: {
                 cacheDirectory: true,
             },
-            exclude: /node_modules[\\/](?!(query-string|strict-uri-encode))/,
+            exclude: /node_modules[\\/](?!(query-string|strict-uri-encode|split-on-first))/,
         },
         {
             test: /\.css$/,
