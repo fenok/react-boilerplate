@@ -1,13 +1,11 @@
 import { ApolloLink } from 'apollo-link';
 import { Request, Response } from 'express';
-import { filter, flatten, uniq, uniqBy } from 'lodash';
 import fetch from 'node-fetch';
 import * as React from 'react';
 import { getDataFromTree } from 'react-apollo';
 import { renderToStaticMarkup, renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
-import Loadable from 'react-loadable';
-import { getBundles, Manifest, Bundle } from 'react-loadable/webpack';
+import { ChunkExtractor } from '@loadable/server';
 import { ServerStyleSheet } from 'styled-components';
 import sprite from 'svg-sprite-loader/runtime/sprite.build';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
@@ -16,24 +14,19 @@ import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloCli
 import { browserConfig, Html, HtmlProps, robots, webManifest } from './modules/common/lib/server-templates';
 
 /** Incomplete */
-interface WebpackHotServerMiddlewareStats {
-    clientStats: {
-        publicPath: string | null;
-        chunks: {
-            files: string[];
-            modules: {
-                id: string;
-                name: string;
-                reasons: {
-                    userRequest: string;
-                }[];
-            }[];
-        }[];
-    };
+interface StatsGroup {
+    clientStats: Stats;
 }
 
-interface FrontendServerStats {
-    reactLoadableStats: Manifest;
+/** Incomplete */
+interface Stats {
+    assetsByChunkName: Record<string, string | string[]>;
+    entrypoints: {
+        main: {
+            assets: string[];
+            chunks: (number | string)[];
+        };
+    };
 }
 
 interface RouterContext {
@@ -49,43 +42,39 @@ export const publicFiles = {
 };
 
 /** Allows frontend-server to generate static HTML file and opt-out of SSR */
-export function getStaticHtml(stats: WebpackHotServerMiddlewareStats | FrontendServerStats) {
-    return getHtmlString(getFallbackHtml(getReactLoadableStats(stats)));
+export function getStaticHtml(statsGroup: StatsGroup) {
+    return getHtmlString(getFallbackHtml(statsGroup.clientStats));
 }
 
 // eslint-disable-next-line import/no-default-export
-export default function serverRenderer(
-    stats: WebpackHotServerMiddlewareStats | FrontendServerStats,
-    link?: ApolloLink,
-) {
+export default function serverRenderer(statsGroup: StatsGroup, link?: ApolloLink) {
     return (req: Request, res: Response) => {
         const publicFile = publicFiles[req.path];
 
         if (publicFile) {
             sendPublicFile(res, publicFile.content, publicFile.contentType);
         } else if (global.IS_DISABLE_SSR) {
-            sendPublicFile(res, getStaticHtml(stats), 'text/html');
+            sendPublicFile(res, getStaticHtml(statsGroup), 'text/html');
         } else {
-            sendHtmlOrRedirect(req, res, getReactLoadableStats(stats), link);
+            sendHtmlOrRedirect(req, res, statsGroup.clientStats, link);
         }
     };
 }
 
-async function sendHtmlOrRedirect(req: Request, res: Response, reactLoadableStats: Manifest, link?: ApolloLink) {
+async function sendHtmlOrRedirect(req: Request, res: Response, stats: Stats, link?: ApolloLink) {
     const context: RouterContext = {};
     const client = IsomorphicApolloClient.getClient({ fetch, link, context });
     const sheet = new ServerStyleSheet();
-    const modules: string[] = [];
+    const extractor = new ChunkExtractor({ stats, publicPath: global.PUBLIC_PATH });
 
-    const App = React.createElement(IsomorphicApp, { client, modules, context, location: req.url });
+    const App = React.createElement(IsomorphicApp, { client, context, location: req.url });
 
     try {
         // eslint-disable-next-line no-underscore-dangle
         if (req.query.__FAIL_SSR__ === undefined) {
-            await Loadable.preloadAll();
             await getDataFromTree(App);
 
-            const content = renderToString(sheet.collectStyles(App));
+            const content = renderToString(sheet.collectStyles(extractor.collectChunks(App)));
 
             if (context.url) {
                 sendRedirect(res, context);
@@ -96,7 +85,7 @@ async function sendHtmlOrRedirect(req: Request, res: Response, reactLoadableStat
                     styleTags: sheet.getStyleTags(),
                     spriteContent: sprite.stringify(),
                     apolloState: client.extract(),
-                    bundles: getUsedBundles(reactLoadableStats, modules),
+                    scriptElements: extractor.getScriptElements(),
                 });
 
                 sendHtml(res, html, context.statusCode);
@@ -105,24 +94,24 @@ async function sendHtmlOrRedirect(req: Request, res: Response, reactLoadableStat
             throw new Error('SSR was disabled by query parameter');
         }
     } catch (error) {
-        const html = getFallbackHtml(reactLoadableStats, error);
+        const html = getFallbackHtml(stats, error);
 
         sendHtml(res, html, context.statusCode, true);
     }
 }
 
-function getFallbackHtml(reactLoadableStats: Manifest, error?: Error) {
+function getFallbackHtml(stats: Stats, error?: Error) {
     try {
         renderToString(React.createElement(StaticHelmet));
 
         return React.createElement(Html, {
             helmet: Helmet.renderStatic(),
-            bundles: getAllBundles(reactLoadableStats),
+            scriptElements: getAllScriptElements(stats),
             ssrError: error,
         });
     } catch (innerError) {
         return React.createElement(Html, {
-            bundles: getAllBundles(reactLoadableStats),
+            scriptElements: getAllScriptElements(stats),
             ssrError: innerError,
         });
     }
@@ -159,80 +148,18 @@ function sendRedirect(res: Response, context: RouterContext) {
         .send();
 }
 
-function getUsedBundles(reactLoadableStats: Manifest, modules: string[]) {
-    return stripSourceMaps(
-        stripHotUpdateBundles([
-            ...getBundles(reactLoadableStats, uniq(modules)),
-            ...stripReactLoadableBundles(getDirtyBundles(reactLoadableStats)),
-        ]),
-    );
+function getAllScriptElements(stats: Stats) {
+    const assetNames = Object.values(stats.assetsByChunkName);
+
+    return stats.entrypoints.main.chunks
+        .map(idOrName => (typeof idOrName === 'number' ? assetNames[idOrName] : stats.assetsByChunkName[idOrName]))
+        .map(createScriptElement);
 }
 
-function getAllBundles(reactLoadableStats: Manifest) {
-    return stripSourceMaps(stripHotUpdateBundles(getDirtyBundles(reactLoadableStats)));
+function createScriptElement(path: string | string[]) {
+    return React.createElement('script', { src: `${global.PUBLIC_PATH}${getFirst(path)}` });
 }
 
-/**
- * Returns unique array of all bundles.
- * Includes all possible bundles:
- *     * regular bundles like 'main' and 'vendors'
- *     * source maps
- *     * react-loadable
- *     * HMR results
- */
-function getDirtyBundles(reactLoadableStats: Manifest) {
-    return uniqBy(flatten(Object.values(reactLoadableStats)), bundle => bundle.file);
-}
-
-function stripReactLoadableBundles(bundles: Bundle[]) {
-    return filter(bundles, bundle => /^(main|vendors)\./.test(bundle.file));
-}
-
-function stripHotUpdateBundles(bundles: Bundle[]) {
-    return filter(bundles, bundle => !bundle.file.includes('.hot-update.js'));
-}
-
-function stripSourceMaps(bundles: Bundle[]) {
-    return filter(bundles, bundle => !bundle.file.includes('.js.map'));
-}
-
-function getReactLoadableStats(stats: WebpackHotServerMiddlewareStats | FrontendServerStats): Manifest {
-    let reactLoadableStats: Manifest;
-    if (!isWebpackHotServerMiddlewareStats(stats)) {
-        ({ reactLoadableStats } = stats);
-    } else {
-        reactLoadableStats = convertWebpackHotServerMiddlewareStatsToReactLoadableStats(stats);
-    }
-
-    return reactLoadableStats;
-}
-
-function isWebpackHotServerMiddlewareStats(
-    stats: WebpackHotServerMiddlewareStats | FrontendServerStats,
-): stats is WebpackHotServerMiddlewareStats {
-    return (stats as WebpackHotServerMiddlewareStats).clientStats !== undefined;
-}
-
-function convertWebpackHotServerMiddlewareStatsToReactLoadableStats(stats: WebpackHotServerMiddlewareStats): Manifest {
-    const manifest: Manifest = {};
-
-    stats.clientStats.chunks.forEach(chunk => {
-        chunk.files.forEach(file => {
-            chunk.modules.forEach(module => {
-                const request = module.reasons[0].userRequest;
-                if (!manifest[request]) {
-                    manifest[request] = [];
-                }
-
-                manifest[request].push({
-                    file,
-                    id: module.id,
-                    name: module.name,
-                    publicPath: `${global.PUBLIC_PATH}${file}`,
-                });
-            });
-        });
-    });
-
-    return manifest;
+function getFirst(line: string | string[]) {
+    return typeof line === 'string' ? line : line[0];
 }

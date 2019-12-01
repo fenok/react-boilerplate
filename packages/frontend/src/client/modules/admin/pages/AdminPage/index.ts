@@ -1,12 +1,5 @@
-import * as React from 'react';
-import Loadable from 'react-loadable';
+import loadable from '@loadable/component';
 
-const AdminPage = Loadable({
-    loader: () => import(/* webpackChunkName: "admin" */ './AdminPage'),
-    loading: () => React.createElement('div', {}, 'Loading'),
-    render(loaded) {
-        return React.createElement(loaded.AdminPage);
-    },
-});
+const AdminPage = loadable(() => import(/* webpackChunkName: "admin" */ './AdminPage'));
 
 export { AdminPage };

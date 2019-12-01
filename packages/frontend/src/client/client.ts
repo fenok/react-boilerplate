@@ -1,22 +1,28 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Loadable from 'react-loadable';
+import { loadableReady } from '@loadable/component';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
 import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloClient';
 
-const rootElement = document.getElementById('root');
+async function renderApp(element: HTMLElement) {
+    const isHydrate = element.innerHTML !== '';
 
-if (rootElement) {
-    const reactHydrateOrRender = rootElement.innerHTML === '' ? ReactDOM.render : ReactDOM.hydrate;
+    const reactHydrateOrRender = isHydrate ? ReactDOM.hydrate : ReactDOM.render;
+    if (isHydrate) {
+        await loadableReady();
+    }
 
-    Loadable.preloadReady().then(() => {
-        reactHydrateOrRender(
-            React.createElement(IsomorphicApp, {
-                client: IsomorphicApolloClient.getClient(),
-            }),
-            rootElement,
-        );
-    });
+    reactHydrateOrRender(
+        React.createElement(IsomorphicApp, {
+            client: IsomorphicApolloClient.getClient(),
+        }),
+        element,
+    );
+}
+
+const element = document.getElementById('root');
+if (element) {
+    renderApp(element);
 } else {
     throw new Error('No element to render');
 }

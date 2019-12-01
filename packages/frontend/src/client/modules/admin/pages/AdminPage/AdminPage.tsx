@@ -28,3 +28,6 @@ const AdminPage: React.FC<Props> = () => {
 };
 
 export { AdminPage, Props };
+
+// eslint-disable-next-line import/no-default-export
+export default AdminPage;

@@ -22,7 +22,7 @@ module.exports = {
         ['@babel/plugin-proposal-decorators', { legacy: true }],
         ['@babel/plugin-proposal-class-properties', { loose: true }],
         '@babel/plugin-syntax-dynamic-import',
-        'react-loadable/babel',
+        '@loadable/babel-plugin',
         process.env.NODE_ENV === 'development' && 'react-hot-loader/babel',
         [
             'babel-plugin-styled-components',

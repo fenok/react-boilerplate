@@ -7,7 +7,7 @@ const app = express();
 try {
     /* eslint-disable global-require,import/no-unresolved */
     const { default: serverRenderer, publicFiles, getStaticHtml } = require('frontend/dist/server.bundle.js');
-    const reactLoadableStats = require('frontend/dist/react-loadable.json');
+    const clientStats = require('frontend/dist/loadable-stats.json');
     /* eslint-enable */
 
     // Create public files in 'public' to serve from '/'
@@ -19,7 +19,7 @@ try {
     if (process.env.REACT_BOILERPLATE_IS_DISABLE_SSR) {
         fs.writeFileSync(
             path.resolve('./node_modules/frontend/dist/public/index.html'),
-            getStaticHtml({ reactLoadableStats })
+            getStaticHtml({ clientStats })
         );
     } else if (fs.existsSync(path.resolve('./node_modules/frontend/dist/public/index.html'))) {
         fs.unlinkSync(path.resolve('./node_modules/frontend/dist/public/index.html'));
@@ -31,7 +31,7 @@ try {
     if (process.env.REACT_BOILERPLATE_IS_DISABLE_SSR) {
         app.use('*', express.static('./node_modules/frontend/dist/public/index.html'));
     } else {
-        app.use(serverRenderer({ reactLoadableStats }));
+        app.use(serverRenderer({ clientStats }));
     }
 } catch (error) {
     if (error.code !== 'MODULE_NOT_FOUND') {

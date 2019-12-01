@@ -13,7 +13,6 @@ import { OpenGraph } from '../OpenGraph';
 import { StaticHelmet } from '../StaticHelmet';
 import { ExternalAndGlobalStyles } from './ExternalAndGlobalStyles';
 import { FontFamiliesObserver } from './FontFamiliesObserver';
-import { IsomorphicLoadableCapture } from './IsomorphicLoadableCapture';
 import { IsomorphicRouter } from './IsomorphicRouter';
 import { Notificator } from './Notificator';
 import { RootErrorBoundary } from './RootErrorBoundary';
@@ -24,43 +23,40 @@ import { SsrErrorReporter } from './SsrErrorReporter';
 
 export interface IsomorphicAppProps {
     client: ApolloClient<NormalizedCacheObject>;
-    modules?: string[];
     location?: string;
     context?: object;
 }
 
-export const IsomorphicApp = hot(({ client, modules, location, context }: IsomorphicAppProps) => {
+export const IsomorphicApp = hot(({ client, location, context }: IsomorphicAppProps) => {
     return (
-        <IsomorphicLoadableCapture modules={modules}>
-            <ApolloProvider client={client}>
-                <RootErrorBoundary>
-                    <AppStateProvider>
-                        <>
-                            <StaticHelmet />
-                            <GlobalFontsStyle />
-                            <ExternalAndGlobalStyles />
-                            <IsomorphicRouter location={location} context={context} basename={global.BASENAME}>
-                                <>
-                                    <OpenGraph />
-                                    <ScrollToTop>
-                                        <Switch>
-                                            {Object.entries<RouteData<any, {}, string>>(routesWithComponents).map(
-                                                ([name, route]) =>
-                                                    global.IS_SHOW_DEV_PAGES || !route.isDev ? (
-                                                        <Route key={name} {...route} />
-                                                    ) : null,
-                                            )}
-                                        </Switch>
-                                    </ScrollToTop>
-                                </>
-                            </IsomorphicRouter>
-                            <FontFamiliesObserver />
-                            <SsrErrorReporter />
-                            <Notificator />
-                        </>
-                    </AppStateProvider>
-                </RootErrorBoundary>
-            </ApolloProvider>
-        </IsomorphicLoadableCapture>
+        <ApolloProvider client={client}>
+            <RootErrorBoundary>
+                <AppStateProvider>
+                    <>
+                        <StaticHelmet />
+                        <GlobalFontsStyle />
+                        <ExternalAndGlobalStyles />
+                        <IsomorphicRouter location={location} context={context} basename={global.BASENAME}>
+                            <>
+                                <OpenGraph />
+                                <ScrollToTop>
+                                    <Switch>
+                                        {Object.entries<RouteData<any, {}, string>>(routesWithComponents).map(
+                                            ([name, route]) =>
+                                                global.IS_SHOW_DEV_PAGES || !route.isDev ? (
+                                                    <Route key={name} {...route} />
+                                                ) : null,
+                                        )}
+                                    </Switch>
+                                </ScrollToTop>
+                            </>
+                        </IsomorphicRouter>
+                        <FontFamiliesObserver />
+                        <SsrErrorReporter />
+                        <Notificator />
+                    </>
+                </AppStateProvider>
+            </RootErrorBoundary>
+        </ApolloProvider>
     );
 });

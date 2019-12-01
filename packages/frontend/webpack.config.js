@@ -9,7 +9,7 @@ const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const { ReactLoadablePlugin } = require('react-loadable/webpack');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OperationRegistryPlugin = require('./tools/webpack/plugins/OperationRegistryPlugin');
 const packageJson = require('./package');
@@ -139,6 +139,8 @@ const commonConfig = env => ({
             new LodashModuleReplacementPlugin({
                 // Required by react-admin
                 paths: true,
+                // Required by loadable-components
+                shorthands: true,
             }),
         new MomentLocalesPlugin({
             localesToKeep: ['ru'],
@@ -214,10 +216,10 @@ const clientConfig = env => ({
     plugins: [
         new webpack.DefinePlugin({ SSR_MODE: false }),
         new CopyWebpackPlugin([{ from: './src/client/public', to: '../public' }]),
-        env.build &&
-            new ReactLoadablePlugin({
-                filename: './dist/react-loadable.json',
-            }),
+        new LoadablePlugin({
+            filename: '../loadable-stats.json',
+            writeToDisk: env.build,
+        }),
         env.build &&
             new OperationRegistryPlugin({
                 filename: './dist/operation-registry.json',
@@ -257,9 +259,8 @@ const clientConfig = env => ({
         path: path.resolve(__dirname, 'dist', 'static'),
     },
     // https://webpack.js.org/guides/caching/
-    // Moving runtime to separate bundle makes it unreachable
-    // Also main bundle hash is changed every build anyway due to BUILD_TIMESTAMP passing
     optimization: {
+        runtimeChunk: 'single',
         splitChunks: {
             cacheGroups: {
                 vendor: {

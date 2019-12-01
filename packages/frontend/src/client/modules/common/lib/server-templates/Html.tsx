@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
 import { HelmetData } from 'react-helmet';
-import { getBundles } from 'react-loadable/webpack';
 import { castError } from '../castError';
 
 export interface HtmlProps {
@@ -11,7 +10,7 @@ export interface HtmlProps {
     content?: string;
     ssrError?: Error;
     apolloState?: object;
-    bundles?: ReturnType<typeof getBundles>;
+    scriptElements?: React.ReactElement<{}>[];
 }
 
 export const Html: React.FC<HtmlProps> = ({
@@ -21,7 +20,7 @@ export const Html: React.FC<HtmlProps> = ({
     content,
     ssrError,
     apolloState,
-    bundles,
+    scriptElements,
 }) => {
     return (
         // eslint-disable-next-line jsx-a11y/html-has-lang
@@ -73,11 +72,7 @@ export const Html: React.FC<HtmlProps> = ({
                                         .join(''),
                                 }}
                             />
-                            {bundles
-                                ? bundles.map(bundle => (
-                                      <script key={bundle.id} src={`${global.PUBLIC_PATH}${bundle.file}`} />
-                                  ))
-                                : null}
+                            {scriptElements}
                         </React.Fragment>,
                     )}`,
                 }}
