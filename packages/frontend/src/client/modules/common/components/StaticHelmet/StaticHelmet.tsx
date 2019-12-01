@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import md5 from 'md5';
 import appleTouchIcon from '../../favicon/apple-touch-icon.png';
 import favicon16x16 from '../../favicon/favicon-16x16.png';
 import favicon32x32 from '../../favicon/favicon-32x32.png';
 import favicon from '../../favicon/favicon.ico';
 import safariPinnedTab from '../../favicon/safari-pinned-tab.svg';
 import { MIN_WIDTH } from '../../lib/media';
-/** Generate files for manifest and msapplication-config favicon */
-import '../../lib/server-templates/index';
+import { webManifest, browserConfig } from '../../lib/server-templates';
 
 const StaticHelmet: React.FC = () => {
     return (
@@ -31,8 +31,11 @@ const StaticHelmet: React.FC = () => {
             <meta name="msapplication-TileColor" content="#ebede8" />
             <meta name="theme-color" content="#ebede8" />
 
-            <link rel="manifest" href={`${global.BASENAME}${WEB_MANIFEST_PATH}?${BUILD_TIMESTAMP}`} />
-            <meta name="msapplication-config" content={`${global.BASENAME}${BROWSER_CONFIG_PATH}?${BUILD_TIMESTAMP}`} />
+            <link rel="manifest" href={`${global.BASENAME}${WEB_MANIFEST_PATH}?${md5(webManifest)}`} />
+            <meta
+                name="msapplication-config"
+                content={`${global.BASENAME}${BROWSER_CONFIG_PATH}?${md5(browserConfig)}`}
+            />
 
             <title>{APP_NAME}</title>
             <meta name="description" content={APP_DESCRIPTION} />
