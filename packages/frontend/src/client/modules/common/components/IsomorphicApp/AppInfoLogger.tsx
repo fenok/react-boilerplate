@@ -1,5 +1,15 @@
+import React from 'react';
+
+const AppInfoLogger: React.FC = () => {
+    React.useEffect(() => {
+        logAppInfo();
+    }, []);
+
+    return null;
+};
+
 export function logAppInfo() {
-    if (global.IS_OUTPUT_APP_INFO && !SSR_MODE) {
+    if (!SSR_MODE) {
         console.groupCollapsed('App info');
 
         console.info(
@@ -17,3 +27,8 @@ IS_DISABLE_SSR:    ${global.IS_DISABLE_SSR}`,
         console.groupEnd();
     }
 }
+
+export { AppInfoLogger };
+
+// eslint-disable-next-line import/no-default-export
+export default AppInfoLogger;

@@ -1,3 +1,4 @@
+import loadable from '@loadable/component';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client/ApolloClient';
 import * as React from 'react';
@@ -7,7 +8,6 @@ import { Route, Switch } from 'react-router';
 import { GlobalFontsStyle } from '../../lib/fonts';
 import { RouteData } from '../../lib/routes';
 import { routesWithComponents } from '../../lib/routes/routesWithComponents';
-import './console-enhancers';
 import { AppStateProvider } from '../AppStateProvider';
 import { OpenGraph } from '../OpenGraph';
 import { StaticHelmet } from '../StaticHelmet';
@@ -18,6 +18,8 @@ import { Notificator } from './Notificator';
 import { RootErrorBoundary } from './RootErrorBoundary';
 import { ScrollToTop } from './ScrollToTop';
 import { SsrErrorReporter } from './SsrErrorReporter';
+
+const AppInfoLogger = loadable(() => import(/* webpackChunkName: "info-logger" */ './AppInfoLogger'));
 
 /** Import global scripts here (such as external-and-global-styles) */
 
@@ -54,6 +56,7 @@ export const IsomorphicApp = hot(({ client, location, context }: IsomorphicAppPr
                         <FontFamiliesObserver />
                         <SsrErrorReporter />
                         <Notificator />
+                        {global.IS_OUTPUT_APP_INFO ? <AppInfoLogger /> : null}
                     </>
                 </AppStateProvider>
             </RootErrorBoundary>
