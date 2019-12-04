@@ -51,7 +51,7 @@ const Page: React.FC<Props> = ({
     ogLocale,
 }) => (
     <React.Fragment>
-        <Status code={statusCode || 200}>
+        <Status code={statusCode}>
             <PageGlobalStyle hideHeader={hideHeader} hideFooter={hideFooter} bodyBackground={bodyBackground} />
             <Helmet>
                 <title>{documentTitle || APP_NAME}</title>
