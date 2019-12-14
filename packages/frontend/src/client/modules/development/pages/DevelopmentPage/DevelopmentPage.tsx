@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useAppState } from '../../../common/components/AppStateProvider';
-import { Button, ButtonThemeMode } from '../../../common/components/Button';
+import { Button, ButtonProps, ButtonThemeMode } from '../../../common/components/Button';
 import { Modal } from '../../../common/components/Modal';
 import { Page } from '../../../common/components/Page';
 import { displayAt, mediaWidth, Width } from '../../../common/lib/media';
@@ -113,7 +113,7 @@ const ModalContent = styled.div`
 
 const StyledButton = styled(Button)`
     color: #ff00ff;
-`;
+` as React.ComponentType<ButtonProps>;
 
 /** Single export is mandatory */
 export { DevelopmentPage, Props };

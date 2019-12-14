@@ -13,7 +13,7 @@ import introspectionQueryResultData from '../../graphql/fragmentTypes.json';
  */
 interface ClientConfig {
     link?: ApolloLink;
-    fetch?: GlobalFetch['fetch'];
+    fetch?: typeof fetch;
     context?: Context;
 }
 
