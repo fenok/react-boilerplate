@@ -70,6 +70,8 @@
                 "@typescript-eslint/no-non-null-assertion": "warn",
                 // Useless
                 "@typescript-eslint/explicit-function-return-type": "off",
+                // TODO: Reconsider
+                "@typescript-eslint/no-empty-function": "off",
                 // https://github.com/eslint/typescript-eslint-parser/issues/437
                 "no-undef": "off",
                 // Enable React Hooks rules

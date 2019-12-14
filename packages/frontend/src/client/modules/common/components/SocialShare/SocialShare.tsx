@@ -35,9 +35,9 @@ const SocialShare: React.FC<Props> = ({ className, url, title, image, vk, ok, tw
     const onNativeShareClick = React.useCallback(() => {
         if (navigator.share) {
             navigator.share({
-                url: (native && native.url) || urlOrDefaultUrl,
-                title: (native && native.title) || title,
-                text: native && native.text,
+                url: native?.url || urlOrDefaultUrl,
+                title: native?.title || title,
+                text: native?.text,
             });
         }
     }, [native, title, urlOrDefaultUrl]);
@@ -46,38 +46,38 @@ const SocialShare: React.FC<Props> = ({ className, url, title, image, vk, ok, tw
         <Root className={className}>
             <SocialButton
                 to={vkUrl({
-                    url: (vk && vk.url) || urlOrDefaultUrl,
-                    title: (vk && vk.title) || title,
-                    image: (vk && vk.image) || image,
-                    noparse: vk && vk.noparse,
+                    url: vk?.url || urlOrDefaultUrl,
+                    title: vk?.title || title,
+                    image: vk?.image || image,
+                    noparse: vk?.noparse,
                     // eslint-disable-next-line @typescript-eslint/camelcase
-                    no_vk_links: vk && vk.no_vk_links,
+                    no_vk_links: vk?.no_vk_links,
                 })}
             >
                 VK
             </SocialButton>
             <SocialButton
                 to={okUrl({
-                    url: (ok && ok.url) || urlOrDefaultUrl,
-                    title: (ok && ok.title) || title,
-                    imageUrl: (ok && ok.imageUrl) || image,
+                    url: ok?.url || urlOrDefaultUrl,
+                    title: ok?.title || title,
+                    imageUrl: ok?.imageUrl || image,
                 })}
             >
                 OK
             </SocialButton>
             <SocialButton
                 to={twUrl({
-                    url: (tw && tw.url) || urlOrDefaultUrl,
-                    text: (tw && tw.text) || title,
-                    hashtags: tw && tw.hashtags,
-                    via: tw && tw.via,
+                    url: tw?.url || urlOrDefaultUrl,
+                    text: tw?.text || title,
+                    hashtags: tw?.hashtags,
+                    via: tw?.via,
                 })}
             >
                 TW
             </SocialButton>
             <SocialButton
                 to={fbUrl({
-                    u: (fb && fb.u) || urlOrDefaultUrl,
+                    u: fb?.u || urlOrDefaultUrl,
                 })}
             >
                 FB
