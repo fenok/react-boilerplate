@@ -215,7 +215,7 @@ const clientConfig = env => ({
     },
     plugins: [
         new webpack.DefinePlugin({ SSR_MODE: false }),
-        new CopyWebpackPlugin([{ from: './src/client/public', to: '../public' }]),
+        env.build && new CopyWebpackPlugin([{ from: './src/client/public', to: '../public' }]),
         new LoadablePlugin({
             filename: '../loadable-stats.json',
             writeToDisk: env.build,
