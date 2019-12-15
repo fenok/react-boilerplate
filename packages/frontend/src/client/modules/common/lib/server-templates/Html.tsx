@@ -43,7 +43,7 @@ export const Html: React.FC<HtmlProps> = ({
                 {...(helmet ? helmet.bodyAttributes.toComponent() : {})}
                 dangerouslySetInnerHTML={{
                     __html: `${spriteContent || ''}${renderToString(
-                        <React.Fragment>
+                        <>
                             {!content ? (
                                 <noscript>
                                     {ssrError ? castError(ssrError).userDisplayedMessage : 'Enable JS in your browser'}
@@ -73,7 +73,7 @@ export const Html: React.FC<HtmlProps> = ({
                                 }}
                             />
                             {scriptElements}
-                        </React.Fragment>,
+                        </>,
                     )}`,
                 }}
             />

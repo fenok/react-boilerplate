@@ -65,11 +65,11 @@ it('passes usual <a> attributes to DOM', () => {
 
 it("has 'seamless' as default theme (styles are easily overridable by default)", () => {
     const { getAllByText } = render(
-        <React.Fragment>
+        <>
             <Button>{BUTTON_LABEL}</Button>
             {/* Intentional refactor-proof name */}
             <Button theme={{ mode: 'seamless' as ButtonThemeMode }}>{BUTTON_LABEL}</Button>
-        </React.Fragment>,
+        </>,
     );
     const buttons = getAllByText(BUTTON_LABEL);
 

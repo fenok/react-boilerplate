@@ -7,10 +7,10 @@ import { CommonProps } from '../../types/CommonProps';
 interface Props extends ExtractProps<typeof ResponsiveModal>, CommonProps {}
 
 const Modal: React.FC<Props> = props => (
-    <React.Fragment>
+    <>
         <ResponsiveModalGlobalStyle />
         <ResponsiveModal {...props} classNames={{ overlay: 'responsive-modal-overlay' }} />
-    </React.Fragment>
+    </>
 );
 
 const ResponsiveModalGlobalStyle = createGlobalStyle`

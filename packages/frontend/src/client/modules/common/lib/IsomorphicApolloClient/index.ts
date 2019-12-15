@@ -24,6 +24,7 @@ interface Context {
 class IsomorphicApolloClient {
     private static client: ApolloClient<NormalizedCacheObject> | null;
 
+    // eslint-disable-next-line react/static-property-placement
     private static context: Context | null;
 
     public static getClient(clientConfig?: ClientConfig): ApolloClient<NormalizedCacheObject> {

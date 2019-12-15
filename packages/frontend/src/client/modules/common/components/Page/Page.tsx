@@ -50,7 +50,7 @@ const Page: React.FC<Props> = ({
     ogDescription,
     ogLocale,
 }) => (
-    <React.Fragment>
+    <>
         <Status code={statusCode}>
             <PageGlobalStyle hideHeader={hideHeader} hideFooter={hideFooter} bodyBackground={bodyBackground} />
             <Helmet>
@@ -71,7 +71,7 @@ const Page: React.FC<Props> = ({
             {!hideHeader ? <Header /> : null}
             {!hideFooter ? <Footer /> : null}
         </Status>
-    </React.Fragment>
+    </>
 );
 
 const PageGlobalStyle = createGlobalStyle`

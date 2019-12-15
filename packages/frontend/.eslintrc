@@ -93,6 +93,8 @@
                 "import/no-default-export": "error",
                 // Function overrides are fine
                 "import/export": "warn",
+                "import/extensions": "off",
+                "react/jsx-props-no-spreading": "off",
                 // Seems fine in some cases
                 "react/destructuring-assignment": "warn",
                 // TODO: Ensure consistency between member-ordering and sort-comp
