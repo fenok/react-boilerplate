@@ -17,7 +17,7 @@
         "post-commit": "git update-index --again"
     },
     "engines": {
-        "node": "8.11.1",
+        "node": "10.13.0",
         "yarn": "^1.6.0"
     },
     "lint-staged": {
@@ -52,7 +52,7 @@
         "eslint-plugin-react": "7.11.1",
         "husky": "1.2.0",
         "lerna": "3.5.0",
-        "lint-staged": "8.1.0",
+        "lint-staged": "9.5.0",
         "node-noop": "1.0.0",
         "prettier": "1.15.2",
         "prompt": "1.0.0"
