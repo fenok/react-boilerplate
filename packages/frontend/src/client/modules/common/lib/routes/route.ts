@@ -1,5 +1,5 @@
 import { Location } from 'history';
-import pathToRegexp from 'path-to-regexp';
+import { compile } from 'path-to-regexp';
 import { RouteProps } from 'react-router';
 import { stringifyHash, stringifyQuery } from './transformations';
 
@@ -49,8 +49,7 @@ function getPathWithParams<
     Query extends { [key in keyof Query]: QueryValue } = {},
     Hash extends string = string
 >(path: string): PathWithParams<Path, Query, Hash> {
-    return params =>
-        `${pathToRegexp.compile(path)(params)}${stringifyQuery(params.query)}${stringifyHash(params.hash)}`;
+    return params => `${compile(path)(params)}${stringifyQuery(params.query)}${stringifyHash(params.hash)}`;
 }
 
 function getLocationWithParams<
@@ -61,7 +60,7 @@ function getLocationWithParams<
 >(path: string): LocationWithParams<Path, Query, Hash, State> {
     return (params, state) => ({
         state,
-        pathname: pathToRegexp.compile(path)(params),
+        pathname: compile(path)(params),
         search: stringifyQuery(params.query),
         hash: stringifyHash(params.hash),
     });
