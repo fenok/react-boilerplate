@@ -92,13 +92,9 @@ declare module 'react-admin' {
         source: string;
         label?: string;
         alwaysOn?: boolean;
+        disabled?: boolean;
     }
     export const TextInput: React.ComponentType<TextInputProps>;
-
-    export interface DisabledInputProps {
-        source: string;
-    }
-    export const DisabledInput: React.ComponentType<DisabledInputProps>;
 
     export interface LongTextInputProps {
         source: string;

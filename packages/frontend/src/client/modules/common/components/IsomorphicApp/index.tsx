@@ -43,11 +43,12 @@ export const IsomorphicApp = hot(({ client, location, context }: IsomorphicAppPr
                                 <OpenGraph />
                                 <ScrollToTop>
                                     <Switch>
-                                        {Object.entries<RouteData<any, {}, string>>(routesWithComponents).map(
-                                            ([name, route]) =>
-                                                global.IS_SHOW_DEV_PAGES || !route.isDev ? (
-                                                    <Route key={name} {...route} />
-                                                ) : null,
+                                        {Object.entries<RouteData<any, {}, string>>(
+                                            routesWithComponents,
+                                        ).map(([name, route]) =>
+                                            global.IS_SHOW_DEV_PAGES || !route.isDev ? (
+                                                <Route key={name} {...route} />
+                                            ) : null,
                                         )}
                                     </Switch>
                                 </ScrollToTop>

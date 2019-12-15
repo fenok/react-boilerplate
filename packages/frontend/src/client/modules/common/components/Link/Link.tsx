@@ -61,7 +61,11 @@ const Link = React.forwardRef(
                             (el => el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }))
                         }
                         to={to}
-                        replace={replace !== undefined ? replace : isSameLocation(location, to)}
+                        replace={
+                            replace !== undefined
+                                ? replace
+                                : isSameLocation(location, typeof to === 'function' ? to(location) : to)
+                        }
                         innerRef={ref}
                         disabled={disabled}
                         tabIndex={disabled ? -1 : tabIndex} // Prevents disabled link from focusing and possible 'clicking'
