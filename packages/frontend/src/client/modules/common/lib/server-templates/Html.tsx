@@ -10,6 +10,7 @@ export interface HtmlProps {
     content?: string;
     ssrError?: Error;
     apolloState?: object;
+    fetchState?: object;
     scriptElements?: React.ReactElement<{}>[];
 }
 
@@ -20,6 +21,7 @@ export const Html: React.FC<HtmlProps> = ({
     content,
     ssrError,
     apolloState,
+    fetchState,
     scriptElements,
 }) => {
     return (
@@ -63,6 +65,7 @@ export const Html: React.FC<HtmlProps> = ({
                                         IS_DISABLE_SSR: JSON.stringify(global.IS_DISABLE_SSR),
                                         /** Dynamic server data part */
                                         APOLLO_STATE: JSON.stringify(apolloState),
+                                        FETCH_STATE: JSON.stringify(fetchState),
                                         SSR_ERROR: JSON.stringify(ssrError, [
                                             ...Object.getOwnPropertyNames(ssrError || {}),
                                             'name',

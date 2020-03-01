@@ -1,5 +1,5 @@
 {
-    "name": "@react-boilerplate/frontend",
+    "name": "frontend",
     "version": "0.0.0",
     "author": "c7s",
     "private": true,
@@ -191,7 +191,10 @@
         "webpack-filter-warnings-plugin": "1.2.1",
         "webpack-hot-middleware": "2.25.0",
         "webpack-hot-server-middleware": "0.6.0",
-        "webpack-merge": "4.2.2"
+        "webpack-merge": "4.2.2",
+        "react-fetching-hooks": "0.0.0",
+        "cors": "2.8.5",
+        "serialize-error": "5.0.0"
     },
     "resolutions": {
         "graphql": "14.3.1",

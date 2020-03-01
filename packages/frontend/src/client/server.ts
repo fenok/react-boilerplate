@@ -8,9 +8,11 @@ import Helmet from 'react-helmet';
 import { ChunkExtractor } from '@loadable/server';
 import { ServerStyleSheet } from 'styled-components';
 import sprite from 'svg-sprite-loader/runtime/sprite.build';
+import {getDataFromTree as getDataFromTreeFetch} from 'react-fetching-hooks';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
 import { StaticHelmet } from './modules/common/components/StaticHelmet';
 import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloClient';
+import { getIsomorphicFetchClient } from './modules/common/lib/IsomorphicFetchClient';
 import { browserConfig, Html, HtmlProps, robots, webManifest } from './modules/common/lib/server-templates';
 
 /** Incomplete */
@@ -64,15 +66,19 @@ export default function serverRenderer(statsGroup: StatsGroup, link?: ApolloLink
 async function sendHtmlOrRedirect(req: Request, res: Response, stats: Stats, link?: ApolloLink) {
     const context: RouterContext = {};
     const client = IsomorphicApolloClient.getClient({ fetch, link, context });
+    const fetchClient = getIsomorphicFetchClient({ fetch });
     const sheet = new ServerStyleSheet();
     const extractor = new ChunkExtractor({ stats, publicPath: global.PUBLIC_PATH });
 
-    const App = React.createElement(IsomorphicApp, { client, context, location: req.url });
+    const App = React.createElement(IsomorphicApp, { client, fetchClient, context, location: req.url });
 
     try {
         // eslint-disable-next-line no-underscore-dangle
         if (req.query.__FAIL_SSR__ === undefined) {
             await getDataFromTree(App);
+            console.log('START_AWAIT');
+            await getDataFromTreeFetch(App);
+            console.log('END_AWAIT')
 
             const content = renderToString(sheet.collectStyles(extractor.collectChunks(App)));
 
@@ -85,6 +91,7 @@ async function sendHtmlOrRedirect(req: Request, res: Response, stats: Stats, lin
                     styleTags: sheet.getStyleTags(),
                     spriteContent: sprite.stringify(),
                     apolloState: client.extract(),
+                    fetchState: fetchClient.extract(),
                     scriptElements: extractor.getScriptElements(),
                 });
 

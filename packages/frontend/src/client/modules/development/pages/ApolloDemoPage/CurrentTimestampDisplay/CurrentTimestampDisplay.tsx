@@ -17,11 +17,14 @@ const CurrentTimestampDisplay: React.FC<Props> = ({ className }) => {
     const { data, loading, error, refetch, variables } = useQuery<CurrentTimestamp, CurrentTimestampVariables>(
         CURRENT_TIMESTAMP_QUERY,
         {
+            fetchPolicy: 'no-cache',
             context: { debatch: true },
             variables: { loadingTime: 1000, returnError: ServerError.TEST_ERROR },
             processorOptions: { ignore: KNOWN_ERROR_LIST },
         },
     );
+
+
 
     const onRefetchClick = React.useCallback(() => {
         refetch({ ...variables, returnError: undefined });

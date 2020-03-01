@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { loadableReady } from '@loadable/component';
 import { IsomorphicApp } from './modules/common/components/IsomorphicApp';
 import { IsomorphicApolloClient } from './modules/common/lib/IsomorphicApolloClient';
+import { getIsomorphicFetchClient } from './modules/common/lib/IsomorphicFetchClient';
 
 async function renderApp(element: HTMLElement) {
     const isHydrate = element.innerHTML !== '';
@@ -15,6 +16,7 @@ async function renderApp(element: HTMLElement) {
     reactHydrateOrRender(
         React.createElement(IsomorphicApp, {
             client: IsomorphicApolloClient.getClient(),
+            fetchClient: getIsomorphicFetchClient(),
         }),
         element,
     );

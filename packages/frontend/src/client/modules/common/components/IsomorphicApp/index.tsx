@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import { hot } from 'react-hot-loader/root';
 import { Route, Switch } from 'react-router';
+import { Provider, Client } from 'react-fetching-hooks';
 import { GlobalFontsStyle } from '../../lib/fonts';
 import { RouteData } from '../../lib/routes';
 import { routesWithComponents } from '../../lib/routes/routesWithComponents';
@@ -17,7 +18,6 @@ import { IsomorphicRouter } from './IsomorphicRouter';
 import { Notificator } from './Notificator';
 import { RootErrorBoundary } from './RootErrorBoundary';
 import { ScrollToTop } from './ScrollToTop';
-import { SsrErrorReporter } from './SsrErrorReporter';
 
 const AppInfoLogger = loadable(() => import(/* webpackChunkName: "info-logger" */ './AppInfoLogger'));
 
@@ -25,14 +25,16 @@ const AppInfoLogger = loadable(() => import(/* webpackChunkName: "info-logger" *
 
 export interface IsomorphicAppProps {
     client: ApolloClient<NormalizedCacheObject>;
+    fetchClient: Client;
     location?: string;
     context?: object;
 }
 
-export const IsomorphicApp = hot(({ client, location, context }: IsomorphicAppProps) => {
+export const IsomorphicApp = hot(({ client, location, context , fetchClient}: IsomorphicAppProps) => {
     return (
         <ApolloProvider client={client}>
             <RootErrorBoundary>
+                <Provider client={fetchClient}>
                 <AppStateProvider>
                     <>
                         <StaticHelmet />
@@ -55,11 +57,11 @@ export const IsomorphicApp = hot(({ client, location, context }: IsomorphicAppPr
                             </>
                         </IsomorphicRouter>
                         <FontFamiliesObserver />
-                        <SsrErrorReporter />
                         <Notificator />
                         {global.IS_OUTPUT_APP_INFO ? <AppInfoLogger /> : null}
                     </>
                 </AppStateProvider>
+                </Provider>
             </RootErrorBoundary>
         </ApolloProvider>
     );

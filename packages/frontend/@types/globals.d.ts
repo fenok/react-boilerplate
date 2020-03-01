@@ -21,6 +21,7 @@ declare namespace NodeJS {
         IS_DISABLE_SSR: boolean;
         /** Dynamic server data part */
         APOLLO_STATE: { [key: string]: { [key: string]: object } } | undefined;
+        FETCH_STATE: { requestStates: {[id: string]: {loading: boolean} | undefined}; sharedData: any; };
         SSR_ERROR: Error | undefined;
     }
 }

@@ -8,7 +8,9 @@ import { BOOKS_AUTHOR_QUERY } from './Graphql';
 interface Props extends CommonProps {}
 
 const BookAuthorDisplay: React.FC<Props> = ({ className }) => {
-    const { data, loading } = useQuery<BooksAuthor>(BOOKS_AUTHOR_QUERY);
+    const { data, loading, error } = useQuery<BooksAuthor>(BOOKS_AUTHOR_QUERY, {fetchPolicy: 'network-only'});
+
+    console.log(data, loading, error);
 
     return (
         <Root className={className}>
